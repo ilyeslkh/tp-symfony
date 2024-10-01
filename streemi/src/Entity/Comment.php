@@ -13,8 +13,24 @@ class Comment
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $publisher = null;
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getPublisher(): ?User
+    {
+        return $this->publisher;
+    }
+
+    public function setPublisher(?User $publisher): static
+    {
+        $this->publisher = $publisher;
+
+        return $this;
     }
 }
