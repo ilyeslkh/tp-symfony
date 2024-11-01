@@ -2,12 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\PlaylistSubscriptionsRepository;
-use Doctrine\DBAL\Types\Types;
+use App\Repository\PlaylistSubscriptionRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PlaylistSubscriptionsRepository::class)]
-class PlaylistSubscriptions
+#[ORM\Entity(repositoryClass: PlaylistSubscriptionRepository::class)]
+class PlaylistSubscription
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
