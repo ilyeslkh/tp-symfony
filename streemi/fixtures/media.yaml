@@ -1,0 +1,7 @@
+\App\Entity\Movie
+  movie:
+    titile:'Avatar'
+    shortDescription:'Des ecolos'
+    longDescription:'Des mecs en bleu'
+    releaseDate:'<datetime()> '
+    coverImage:'https://picsum.photos/seed/picsum/200/300'
