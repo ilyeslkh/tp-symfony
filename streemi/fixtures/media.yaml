@@ -1,7 +1,35 @@
-\App\Entity\Movie
-  movie:
-    titile:'Avatar'
-    shortDescription:'Des ecolos'
+\App\Entity\Media
+  media (template):
+    shortDescription:'short description <current()>'
     longDescription:'Des mecs en bleu'
     releaseDate:'<datetime()> '
     coverImage:'https://picsum.photos/seed/picsum/200/300'
+    categories:
+      -'@category_action'
+      -'@category_adventure'
+
+    languages:
+      -@'lang_fr'
+      -@'lang_en'
+
+
+\App\Entity\Movie
+  movie{1..50}(extends media):
+    title:'Film <current()name>'
+   
+
+\App\Entity\Serie
+  serie{1..50} (extends media):
+    title:'Serie <current() name>'
+
+App\Entity\Season:
+  season{1..10}:
+    number:<numberBetween(1,10)>
+    serie:'@serie*'
+
+App\Entity\Episode:
+  episode{1..100}:
+    title:'<name()>'
+    duration:<numberBetween(30,120)>
+    releaseAt:'<dateTimeBetween('-1 week,'+1 week')'
+    season:'@season'
