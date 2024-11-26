@@ -32,4 +32,4 @@ App\Entity\Episode:
     title:'<name()>'
     duration:<numberBetween(30,120)>
     releaseAt:'<dateTimeBetween('-1 week,'+1 week')'
-    season:'@season'
+    season:'@season*'
