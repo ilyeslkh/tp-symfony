@@ -20,19 +20,16 @@ class MediaController extends AbstractController
         ]);
     }
 
-    #[Route('/media/{id}', name: 'media_detail', requirements: ['id' => '\d+'])]
-    public function detail(int $id, MediaRepository $mediaRepository): Response
-    {
-        $media = $mediaRepository->find($id);
+    #[Route('/media/{id}', name: 'media_detail')]
+public function mediaDetail(int $id, MediaRepository $mediaRepository): Response
+{
+    $media = $mediaRepository->find($id);
 
-        if (!$media) {
-            throw $this->createNotFoundException('Media not found.');
-        }
+    return $this->render('media/detail.html.twig', [
+        'media' => $media,
+    ]);
+}
 
-        return $this->render('media/detail.html.twig', [
-            'media' => $media,
-        ]);
-    }
 
     #[Route('/media/popular', name: 'media_popular')]
     public function popular(MediaRepository $mediaRepository): Response

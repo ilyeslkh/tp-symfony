@@ -14,6 +14,18 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CategoryController extends AbstractController
 {
+
+    #[Route('/categories', name: 'category_list')]
+public function listCategories(CategoryRepository $categoryRepository): Response
+{
+    $categories = $categoryRepository->findAll();
+
+    return $this->render('category.html.twig', [
+        'categories' => $categories,
+    ]);
+}
+
+
     #[Route(path: '/categories{id}', name: 'page_categories')]
     public function categories(String $id,  EntityManagerInterface $entityManager,CategoryRepository $categoryRepository):Response
     {
