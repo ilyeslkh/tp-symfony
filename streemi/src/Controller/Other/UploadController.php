@@ -8,13 +8,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class SubscriptionController extends AbstractController
+class UploadController extends AbstractController
 {
-    #[Route('/subscriptions', name: 'page_subscription')]
+    #[Route('/upload', name: 'page_upload')]
     public function index(): Response
     {
-        return $this->render('other/abonnements.html.twig');
+        return $this->render('other/upload.html.twig');
     }
-
-    
 }

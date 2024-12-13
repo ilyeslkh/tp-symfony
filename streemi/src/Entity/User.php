@@ -7,20 +7,21 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User
+class User implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $username = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
@@ -28,6 +29,9 @@ class User
 
     #[ORM\Column(enumType: UserAccountStatusEnum::class)]
     private ?UserAccountStatusEnum $accountStatus = UserAccountStatusEnum::INACTIVE;
+
+    #[ORM\Column(type: "json")]
+    private array $roles = [];
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Subscription $currentSubscription = null;
@@ -81,7 +85,7 @@ class User
         return $this->username;
     }
 
-    public function setUsername(string $username): static
+    public function setUsername(string $username): self
     {
         $this->username = $username;
 
@@ -93,7 +97,7 @@ class User
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 
@@ -105,7 +109,7 @@ class User
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(string $password): self
     {
         $this->password = $password;
 
@@ -117,7 +121,7 @@ class User
         return $this->accountStatus;
     }
 
-    public function setAccountStatus(UserAccountStatusEnum $accountStatus): static
+    public function setAccountStatus(UserAccountStatusEnum $accountStatus): self
     {
         $this->accountStatus = $accountStatus;
 
@@ -129,7 +133,7 @@ class User
         return $this->currentSubscription;
     }
 
-    public function setCurrentSubscription(?Subscription $currentSubscription): static
+    public function setCurrentSubscription(?Subscription $currentSubscription): self
     {
         $this->currentSubscription = $currentSubscription;
 
@@ -144,7 +148,7 @@ class User
         return $this->comments;
     }
 
-    public function addComment(Comment $comment): static
+    public function addComment(Comment $comment): self
     {
         if (!$this->comments->contains($comment)) {
             $this->comments->add($comment);
@@ -154,10 +158,9 @@ class User
         return $this;
     }
 
-    public function removeComment(Comment $comment): static
+    public function removeComment(Comment $comment): self
     {
         if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
             if ($comment->getPublisher() === $this) {
                 $comment->setPublisher(null);
             }
@@ -174,7 +177,7 @@ class User
         return $this->subscriptionHistories;
     }
 
-    public function addSubscriptionHistory(SubscriptionHistory $subscriptionHistory): static
+    public function addSubscriptionHistory(SubscriptionHistory $subscriptionHistory): self
     {
         if (!$this->subscriptionHistories->contains($subscriptionHistory)) {
             $this->subscriptionHistories->add($subscriptionHistory);
@@ -184,10 +187,9 @@ class User
         return $this;
     }
 
-    public function removeSubscriptionHistory(SubscriptionHistory $subscriptionHistory): static
+    public function removeSubscriptionHistory(SubscriptionHistory $subscriptionHistory): self
     {
         if ($this->subscriptionHistories->removeElement($subscriptionHistory)) {
-            // set the owning side to null (unless already changed)
             if ($subscriptionHistory->getSubscriber() === $this) {
                 $subscriptionHistory->setSubscriber(null);
             }
@@ -204,7 +206,7 @@ class User
         return $this->playlistSubscriptions;
     }
 
-    public function addPlaylistSubscription(PlaylistSubscription $playlistSubscription): static
+    public function addPlaylistSubscription(PlaylistSubscription $playlistSubscription): self
     {
         if (!$this->playlistSubscriptions->contains($playlistSubscription)) {
             $this->playlistSubscriptions->add($playlistSubscription);
@@ -214,10 +216,9 @@ class User
         return $this;
     }
 
-    public function removePlaylistSubscription(PlaylistSubscription $playlistSubscription): static
+    public function removePlaylistSubscription(PlaylistSubscription $playlistSubscription): self
     {
         if ($this->playlistSubscriptions->removeElement($playlistSubscription)) {
-            // set the owning side to null (unless already changed)
             if ($playlistSubscription->getSubscriber() === $this) {
                 $playlistSubscription->setSubscriber(null);
             }
@@ -234,7 +235,7 @@ class User
         return $this->playlists;
     }
 
-    public function addPlaylist(Playlist $playlist): static
+    public function addPlaylist(Playlist $playlist): self
     {
         if (!$this->playlists->contains($playlist)) {
             $this->playlists->add($playlist);
@@ -244,10 +245,9 @@ class User
         return $this;
     }
 
-    public function removePlaylist(Playlist $playlist): static
+    public function removePlaylist(Playlist $playlist): self
     {
         if ($this->playlists->removeElement($playlist)) {
-            // set the owning side to null (unless already changed)
             if ($playlist->getCreator() === $this) {
                 $playlist->setCreator(null);
             }
@@ -264,7 +264,7 @@ class User
         return $this->watchHistories;
     }
 
-    public function addWatchHistory(WatchHistory $watchHistory): static
+    public function addWatchHistory(WatchHistory $watchHistory): self
     {
         if (!$this->watchHistories->contains($watchHistory)) {
             $this->watchHistories->add($watchHistory);
@@ -274,15 +274,40 @@ class User
         return $this;
     }
 
-    public function removeWatchHistory(WatchHistory $watchHistory): static
+    public function removeWatchHistory(WatchHistory $watchHistory): self
     {
         if ($this->watchHistories->removeElement($watchHistory)) {
-            // set the owning side to null (unless already changed)
             if ($watchHistory->getWatcher() === $this) {
                 $watchHistory->setWatcher(null);
             }
         }
+        
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function eraseCredentials():void
+    {
+        // Clear sensitive data if needed
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
     }
 }

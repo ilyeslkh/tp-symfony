@@ -1,0 +1,20 @@
+App\Entity\Subscription
+  subscription_basic:
+    name: "Basic"
+    price: 10
+    duration: 30
+
+  subscription_standard:
+    name: "Standard"
+    price: 20
+    duration: 60
+
+  subscription_premium:
+    name: "Premium"
+    price: 30
+    duration: 90
+
+  subscription_vip:
+    name: "VIP"
+    price: 50
+    duration: 180

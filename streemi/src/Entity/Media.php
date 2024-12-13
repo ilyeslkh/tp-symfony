@@ -76,7 +76,7 @@ class Media
     public function __construct()
     {
         $this->comments = new ArrayCollection();
-        $this->watchHistories = new ArrayCollection();
+        $this->watchHistories = new ArrayCollection(); 
         $this->playlistMedia = new ArrayCollection();
         $this->categories = new ArrayCollection();
         $this->languages = new ArrayCollection();

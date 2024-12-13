@@ -16,28 +16,53 @@ class WatchHistoryRepository extends ServiceEntityRepository
         parent::__construct($registry, WatchHistory::class);
     }
 
-    //    /**
-    //     * @return WatchHistory[] Returns an array of WatchHistory objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('w')
-    //            ->andWhere('w.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('w.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Trouve les 10 médias les plus regardés.
+     *
+     * @return WatchHistory[]
+     */
+    public function findMostViewedMedia(int $limit = 10): array
+    {
+        return $this->createQueryBuilder('w')
+            ->join('w.media', 'm')
+            ->groupBy('m.id')
+            ->orderBy('SUM(w.numberOfViews)', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?WatchHistory
-    //    {
-    //        return $this->createQueryBuilder('w')
-    //            ->andWhere('w.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Trouve les historiques d'un utilisateur spécifique.
+     *
+     * @param int $userId
+     * @return WatchHistory[]
+     */
+    public function findByUser(int $userId): array
+    {
+        return $this->createQueryBuilder('w')
+            ->andWhere('w.watcher = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('w.lastWatchedAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Trouve les historiques par média.
+     *
+     * @param int $mediaId
+     * @return WatchHistory[]
+     */
+    public function findByMedia(int $mediaId): array
+    {
+        return $this->createQueryBuilder('w')
+            ->andWhere('w.media = :mediaId')
+            ->setParameter('mediaId', $mediaId)
+            ->orderBy('w.lastWatchedAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+         
 }

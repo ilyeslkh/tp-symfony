@@ -16,6 +16,36 @@ class EpisodeRepository extends ServiceEntityRepository
         parent::__construct($registry, Episode::class);
     }
 
+
+    public function findRecentEpisodes(int $maxResults): array
+{
+    return $this->createQueryBuilder('e')
+        ->orderBy('e.releasedAt', 'DESC')
+        ->setMaxResults($maxResults)
+        ->getQuery()
+        ->getResult();
+}
+
+public function findLongestEpisodes(int $maxResults): array
+{
+    return $this->createQueryBuilder('e')
+        ->orderBy('e.duration', 'DESC')
+        ->setMaxResults($maxResults)
+        ->getQuery()
+        ->getResult();
+}
+
+public function findEpisodesByKeyword(string $keyword): array
+{
+    return $this->createQueryBuilder('e')
+        ->andWhere('e.title LIKE :keyword')
+        ->setParameter('keyword', '%' . $keyword . '%')
+        ->orderBy('e.releasedAt', 'DESC')
+        ->getQuery()
+        ->getResult();
+}
+
+
     //    /**
     //     * @return Episode[] Returns an array of Episode objects
     //     */
