@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Other;
 
 use App\Repository\WatchHistoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

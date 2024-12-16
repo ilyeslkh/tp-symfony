@@ -43,6 +43,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Playlist::class, mappedBy: 'creator', cascade: ['persist', 'remove'])]
     private Collection $createdPlaylists;
 
+  
+
     public function __construct()
     {
         $this->ownedPlaylists = new ArrayCollection();
@@ -124,7 +126,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        return $this->email ?? '';
+        return $this->email;
     }
 
     public function getCurrentSubscription(): ?Subscription
@@ -190,4 +192,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    
 }

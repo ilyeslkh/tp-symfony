@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ category.name }}{% endblock %}
+
+{% block content %}
+<h1>{{ category.name }}</h1>
+<div class="medias">
+    {% for media in category.medias %}
+        {% include 'parts/movie/movie-card.html.twig' with { 'movie': media } %}
+    {% endfor %}
+</div>
+{% endblock %}

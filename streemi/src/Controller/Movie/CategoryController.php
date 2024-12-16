@@ -2,19 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Other;
+namespace App\Controller\Movie;
 
 use App\Entity\Category;
 use App\Repository\CategoryRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 class CategoryController extends AbstractController
 {
-
     #[Route('/categories', name: 'category_list')]
     public function listCategories(CategoryRepository $categoryRepository): Response
     {
@@ -25,21 +23,25 @@ class CategoryController extends AbstractController
         ]);
     }
 
-
-    #[Route(path: '/categories{id}', name: 'page_categories')]
-    public function categories(String $id,  EntityManagerInterface $entityManager,CategoryRepository $categoryRepository):Response
+    #[Route(path: '/categories/{id}', name: 'category_detail')]
+    public function categoryDetail(Category $category): Response
     {
-
-        dump($id);
-        $categories=$categoryRepository ->findAll();
-        return $this->render('other/discover.html.twig',['categories'=>$categories]);
+        return $this->render('category/detail.html.twig', [
+            'category' => $category,
+        ]);
     }
 
-    #[Route(path: '/categorie{id}', name: 'page_categories')]
-    public function getCategoriesId(String $id,  EntityManagerInterface $entityManager,Category $categorie):Response
+    #[Route(path: '/categorie/{id}', name: 'category_movies')]
+    public function getCategoryMovies(int $id, CategoryRepository $categoryRepository): Response
     {
+        $category = $categoryRepository->find($id);
 
-        dump($id);
-        return $this->render('movie/category.html.twig',['categorie'=>$categorie]);
+        if (!$category) {
+            throw $this->createNotFoundException('Category not found');
+        }
+
+        return $this->render('movie/category.html.twig', ['category' => $category]);
     }
+
+   
 }

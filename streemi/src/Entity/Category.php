@@ -20,6 +20,8 @@ class Category
 
     #[ORM\Column(length: 255)]
     private ?string $label = null;
+
+
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $icon = null;
 
@@ -60,6 +62,18 @@ class Category
     public function setLabel(string $label): static
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?string $icon): self
+    {
+        $this->icon = $icon;
 
         return $this;
     }

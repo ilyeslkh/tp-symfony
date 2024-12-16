@@ -1,0 +1,7 @@
+<!-- templates/parts/movies/movie-card.html.twig -->
+
+<div class="movie-card">
+    <h2>{{ movie.title }}</h2>
+    <p>{{ movie.description }}</p>
+    <a href="{{ path('movie_detail', { id: movie.id }) }}">View Details</a>
+</div>

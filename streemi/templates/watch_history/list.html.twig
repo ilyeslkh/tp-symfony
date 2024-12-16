@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Watch History List{% endblock %}
+
+{% block body %}
+    <h1>Watch History List</h1>
+    <ul>
+        {% for history in histories %}
+            <li>
+                {{ history.watcher.username }} watched {{ history.media.title }} on {{ history.lastWatchedAt|date('Y-m-d H:i:s') }} ({{ history.numberOfViews }} views)
+            </li>
+        {% else %}
+            <li>No watch history found</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

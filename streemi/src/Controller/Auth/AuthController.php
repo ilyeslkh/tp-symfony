@@ -1,16 +1,24 @@
 <?php
 
-declare(strict_types=1);
-
+// src/Controller/Auth/AuthController.php
 namespace App\Controller\Auth;
 
+use App\Service\EmailService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AuthController extends AbstractController
 {
-    #[Route(path: '/login', name: 'page_login')]
+    private EmailService $emailService;
+
+    public function __construct(EmailService $emailService)
+    {
+        $this->emailService = $emailService;
+    }
+
+    #[Route(path: '/login2', name: 'page_login')]
     public function login(): Response
     {
         return $this->render('auth/login.html.twig');
@@ -22,20 +30,30 @@ class AuthController extends AbstractController
         return $this->render('auth/register.html.twig');
     }
 
-    #[Route(path: '/forgot', name: 'page_forgot_password')]
-    public function forgotPassword(): Response
+    #[Route(path: '/forgot', name: 'page_forgot')]
+    public function forgot(Request $request): Response
     {
+        if ($request->isMethod('POST')) {
+            $email = $request->request->get('email');
+            // Generate a reset token (this is just an example, you should implement a proper token generation and storage)
+            $resetToken = bin2hex(random_bytes(32));
+            // Send the email
+            $this->emailService->sendForgotPasswordEmail($email, $resetToken);
+            // Add a flash message or any other response
+            $this->addFlash('success', 'An email has been sent to reset your password.');
+        }
+
         return $this->render('auth/forgot.html.twig');
     }
 
-    #[Route(path: '/reset', name: 'page_reset_password')]
-    public function resetPassword(): Response
+    #[Route(path: '/reset', name: 'page_reset')]
+    public function reset(): Response
     {
         return $this->render('auth/reset.html.twig');
     }
 
-    #[Route(path: '/confirm', name: 'page_confirm_account')]
-    public function confirmAccount(): Response
+    #[Route(path: '/confirm', name: 'page_confirm')]
+    public function confirm(): Response
     {
         return $this->render('auth/confirm.html.twig');
     }
