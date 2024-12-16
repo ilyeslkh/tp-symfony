@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Popular Media{% endblock %}
+
+{% block content %}
+<h1>Popular Media</h1>
+<div class="media-grid">
+    {% for media in medias %}
+        <div class="media-card">
+            <img src="{{ media.coverImage }}" alt="{{ media.title }}">
+            <h2>{{ media.title }}</h2>
+            <p>{{ media.shortDescription }}</p>
+            <p>Popularity: {{ media.popularity }}</p>
+            <a href="{{ path('media_detail', { id: media.id }) }}">View Details</a>
+        </div>
+    {% else %}
+        <p>No popular media available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

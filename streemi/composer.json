@@ -19,6 +19,7 @@
     "symfony/monolog-bundle": "^3.0",
     "symfony/runtime": "7.1.*",
     "symfony/security-bundle": "7.1.*",
+    "symfony/security-core": "7.1.*",
     "symfony/twig-bundle": "7.1.*",
     "symfony/yaml": "7.1.*"
   },

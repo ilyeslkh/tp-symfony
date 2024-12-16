@@ -53,6 +53,15 @@ class AppFixtures extends Fixture
         $user->setRoles(['ROLE_USER']);
         $manager->persist($user);
 
+        $user = new User();
+        $user->setEmail('admin@example.com');
+        $user->setPassword($this->passwordHasher->hashPassword($user, 'admin123'));
+        $user->setRoles(['ROLE_ADMIN']);
+        
+        $manager->persist($user);
+        $manager->flush();
+
+
         // Add Subscriptions
         $subscription = new Subscription();
         $subscription->setName('Premium');
@@ -86,5 +95,7 @@ class AppFixtures extends Fixture
         $manager->persist($playlist);
 
         $manager->flush();
+
+        
     }
 }

@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ media.title }} Details{% endblock %}
+
+{% block content %}
+<h1>{{ media.title }}</h1>
+<div class="media-detail">
+    <img src="{{ media.coverImage }}" alt="{{ media.title }}">
+    <p><strong>Short Description:</strong> {{ media.shortDescription }}</p>
+    <p><strong>Long Description:</strong> {{ media.longDescription }}</p>
+    <p><strong>Release Date:</strong> {{ media.releaseDate|date('Y-m-d') }}</p>
+    <p><strong>Categories:</strong>
+        {% for category in media.categories %}
+            {{ category.nom }}{% if not loop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+    <p><strong>Languages:</strong>
+        {% for language in media.languages %}
+            {{ language.nom }}{% if not loop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+    <p><strong>Popularity:</strong> {{ media.popularity }}</p>
+</div>
+<a href="{{ path('media_list') }}">Back to Media List</a>
+{% endblock %}

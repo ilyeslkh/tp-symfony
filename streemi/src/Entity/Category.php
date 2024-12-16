@@ -20,6 +20,9 @@ class Category
 
     #[ORM\Column(length: 255)]
     private ?string $label = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $icon = null;
+
 
     /**
      * @var Collection<int, Media>

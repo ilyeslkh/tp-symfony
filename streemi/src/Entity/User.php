@@ -127,6 +127,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email ?? '';
     }
 
+    public function getCurrentSubscription(): ?Subscription
+    {
+        return $this->currentSubscription;
+    }
+
+    public function setCurrentSubscription(?Subscription $subscription): self
+    {
+        $this->currentSubscription = $subscription;
+
+        return $this;
+    }
+
     public function getOwnedPlaylists(): Collection
     {
         return $this->ownedPlaylists;
