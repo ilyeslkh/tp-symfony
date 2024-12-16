@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Episodes of Season{% endblock %}
+
+{% block content %}
+<h1>Episodes in Season</h1>
+<div class="episodes-list">
+    {% for episode in episodes %}
+        <div class="episode-card">
+            <h2>{{ episode.title }}</h2>
+            <p>Duration: {{ episode.duration }} minutes</p>
+            <p>Released At: {{ episode.releasedAt|date('Y-m-d') }}</p>
+            <a href="{{ path('episode_detail', { id: episode.id }) }}">View Details</a>
+        </div>
+    {% else %}
+        <p>No episodes available for this season.</p>
+    {% endfor %}
+</div>
+<a href="{{ path('episode_list') }}">Back to All Episodes</a>
+{% endblock %}

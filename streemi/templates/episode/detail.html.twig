@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Episode Details{% endblock %}
+
+{% block content %}
+<h1>{{ episode.title }}</h1>
+<div class="episode-detail">
+    <p><strong>Duration:</strong> {{ episode.duration }} minutes</p>
+    <p><strong>Released At:</strong> {{ episode.releasedAt|date('Y-m-d') }}</p>
+    <p><strong>Season:</strong> {{ episode.season.id }}</p>
+    <a href="{{ path('season_episodes', { seasonId: episode.season.id }) }}">Back to Season Episodes</a>
+</div>
+{% endblock %}

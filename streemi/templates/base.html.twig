@@ -1,12 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>{% block title %}My App{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Default Title{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
 </head>
 <body>
-    {% include 'parts/left-menu.html.twig' %}
+    <header>
+        {% include 'parts/left-menu.html.twig' %}
+    </header>
     <main>
-        {% block content %}{% endblock %}
+        {% block content %}
+        <!-- Page-specific content will be injected here -->
+        {% endblock %}
     </main>
+    <footer>
+        {% include 'parts/right-sidebar.html.twig' %}
+    </footer>
 </body>
 </html>
