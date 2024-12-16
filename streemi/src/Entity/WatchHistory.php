@@ -19,11 +19,11 @@ class WatchHistory
     #[ORM\Column]
     private ?int $numberOfViews = null;
 
-    #[ORM\ManyToOne(inversedBy: 'watchHistories')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'watchHistories')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $watcher = null;
 
-    #[ORM\ManyToOne(inversedBy: 'watchHistories')]
+    #[ORM\ManyToOne(targetEntity: Media::class, inversedBy: 'watchHistories')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Media $media = null;
 

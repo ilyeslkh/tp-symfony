@@ -21,14 +21,14 @@ class MediaController extends AbstractController
     }
 
     #[Route('/media/{id}', name: 'media_detail')]
-public function mediaDetail(int $id, MediaRepository $mediaRepository): Response
-{
-    $media = $mediaRepository->find($id);
+    public function mediaDetail(int $id, MediaRepository $mediaRepository): Response
+    {
+        $media = $mediaRepository->find($id);
 
-    return $this->render('media/detail.html.twig', [
-        'media' => $media,
-    ]);
-}
+        return $this->render('media/detail.html.twig', [
+            'media' => $media,
+        ]);
+    }
 
 
     #[Route('/media/popular', name: 'media_popular')]

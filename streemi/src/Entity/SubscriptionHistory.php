@@ -19,11 +19,11 @@ class SubscriptionHistory
     #[ORM\Column]
     private ?\DateTimeImmutable $endAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'subscriptionHistories')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'subscriptionHistories')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $subscriber = null;
 
-    #[ORM\ManyToOne(inversedBy: 'subscriptionHistories')]
+    #[ORM\ManyToOne(targetEntity: Subscription::class, inversedBy: 'subscriptionHistories')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Subscription $subscription = null;
 

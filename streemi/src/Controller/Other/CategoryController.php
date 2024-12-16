@@ -16,14 +16,14 @@ class CategoryController extends AbstractController
 {
 
     #[Route('/categories', name: 'category_list')]
-public function listCategories(CategoryRepository $categoryRepository): Response
-{
-    $categories = $categoryRepository->findAll();
+    public function listCategories(CategoryRepository $categoryRepository): Response
+    {
+        $categories = $categoryRepository->findAll();
 
-    return $this->render('category.html.twig', [
-        'categories' => $categories,
-    ]);
-}
+        return $this->render('category.html.twig', [
+            'categories' => $categories,
+        ]);
+    }
 
 
     #[Route(path: '/categories{id}', name: 'page_categories')]

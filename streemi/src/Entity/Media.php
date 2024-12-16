@@ -73,6 +73,10 @@ class Media
     #[ORM\Column]
     private array $casting = [];
 
+    #[ORM\Column(type: 'integer')]
+    private ?int $popularity = null;
+
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -308,4 +312,24 @@ class Media
 
         return $this;
     }
+
+    public function setDescription(string $description): static
+    {
+        $this->setLongDescription($description); // Utilisation de la méthode de Media
+        return $this;
+    }
+
+    public function getPopularity(): ?int
+    {
+        return $this->popularity;
+    }
+
+    public function setPopularity(int $popularity): static
+    {
+        $this->popularity = $popularity;
+
+        return $this;
+    }
+
+
 }

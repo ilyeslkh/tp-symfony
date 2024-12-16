@@ -24,13 +24,17 @@ class Playlist
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'ownedPlaylists')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $user = null;
+
     /**
      * @var Collection<int, PlaylistSubscription>
      */
-    #[ORM\OneToMany(targetEntity: PlaylistSubscriptions::class, mappedBy: 'playlist')]
+    #[ORM\OneToMany(targetEntity: PlaylistSubscription::class, mappedBy: 'playlist')]
     private Collection $playlistSubscriptions;
 
-    #[ORM\ManyToOne(inversedBy: 'playlists')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'createdPlaylists')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $creator = null;
 
@@ -87,32 +91,14 @@ class Playlist
         return $this;
     }
 
-    /**
-     * @return Collection<int, PlaylistSubscription>
-     */
-    public function getPlaylistSubscriptions(): Collection
+    public function getUser(): ?User
     {
-        return $this->playlistSubscriptions;
+        return $this->user;
     }
 
-    public function addPlaylistSubscription(PlaylistSubscriptions $playlistSubscription): static
+    public function setUser(?User $user): static
     {
-        if (!$this->playlistSubscriptions->contains($playlistSubscription)) {
-            $this->playlistSubscriptions->add($playlistSubscription);
-            $playlistSubscription->setPlaylist($this);
-        }
-
-        return $this;
-    }
-
-    public function removePlaylistSubscription(PlaylistSubscriptions $playlistSubscription): static
-    {
-        if ($this->playlistSubscriptions->removeElement($playlistSubscription)) {
-            // set the owning side to null (unless already changed)
-            if ($playlistSubscription->getPlaylist() === $this) {
-                $playlistSubscription->setPlaylist(null);
-            }
-        }
+        $this->user = $user;
 
         return $this;
     }
@@ -125,6 +111,35 @@ class Playlist
     public function setCreator(?User $creator): static
     {
         $this->creator = $creator;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PlaylistSubscription>
+     */
+    public function getPlaylistSubscriptions(): Collection
+    {
+        return $this->playlistSubscriptions;
+    }
+
+    public function addPlaylistSubscription(PlaylistSubscription $playlistSubscription): static
+    {
+        if (!$this->playlistSubscriptions->contains($playlistSubscription)) {
+            $this->playlistSubscriptions->add($playlistSubscription);
+            $playlistSubscription->setPlaylist($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlaylistSubscription(PlaylistSubscription $playlistSubscription): static
+    {
+        if ($this->playlistSubscriptions->removeElement($playlistSubscription)) {
+            if ($playlistSubscription->getPlaylist() === $this) {
+                $playlistSubscription->setPlaylist(null);
+            }
+        }
 
         return $this;
     }
@@ -150,7 +165,6 @@ class Playlist
     public function removePlaylistMedium(PlaylistMedia $playlistMedium): static
     {
         if ($this->playlistMedia->removeElement($playlistMedium)) {
-            // set the owning side to null (unless already changed)
             if ($playlistMedium->getPlaylist() === $this) {
                 $playlistMedium->setPlaylist(null);
             }
