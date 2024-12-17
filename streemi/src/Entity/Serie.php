@@ -1,16 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Entity;
 
 use App\Repository\SerieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\Entity;
 
-#[Entity(repositoryClass: SerieRepository::class)]
+#[ORM\Entity(repositoryClass: SerieRepository::class)]
 class Serie extends Media
 {
     /**

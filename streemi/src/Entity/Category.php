@@ -15,26 +15,21 @@ class Category
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $nom = null;
+    #[ORM\Column(length: 100)]
+    private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 100)]
     private ?string $label = null;
-
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private ?string $icon = null;
-
 
     /**
      * @var Collection<int, Media>
      */
-    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'categories')]
-    private Collection $medias;
+    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'category')]
+    private Collection $media;
 
     public function __construct()
     {
-        $this->medias = new ArrayCollection();
+        $this->media = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -42,14 +37,14 @@ class Category
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getName(): ?string
     {
-        return $this->nom;
+        return $this->name;
     }
 
-    public function setNom(string $nom): static
+    public function setName(string $name): static
     {
-        $this->nom = $nom;
+        $this->name = $name;
 
         return $this;
     }
@@ -66,40 +61,28 @@ class Category
         return $this;
     }
 
-    public function getIcon(): ?string
-    {
-        return $this->icon;
-    }
-
-    public function setIcon(?string $icon): self
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Media>
      */
-    public function getMedias(): Collection
+    public function getMedia(): Collection
     {
-        return $this->medias;
+        return $this->media;
     }
 
-    public function addMedia(Media $media): static
+    public function addMedium(Media $medium): static
     {
-        if (!$this->medias->contains($media)) {
-            $this->medias->add($media);
-            $media->addCategory($this);
+        if (!$this->media->contains($medium)) {
+            $this->media->add($medium);
+            $medium->addCategory($this);
         }
 
         return $this;
     }
 
-    public function removeMedia(Media $media): static
+    public function removeMedium(Media $medium): static
     {
-        if ($this->medias->removeElement($media)) {
-            $media->removeCategory($this);
+        if ($this->media->removeElement($medium)) {
+            $medium->removeCategory($this);
         }
 
         return $this;

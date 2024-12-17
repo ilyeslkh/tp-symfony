@@ -17,9 +17,8 @@ class SecurityController extends AbstractController
         $this->csrfTokenManager = $csrfTokenManager;
     }
 
-    /**
-     * @Route("/login", name="app_login")
-     */
+    
+    #[Route('/login', name: 'app_login')]    
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // get the login error if there is one
@@ -31,11 +30,44 @@ class SecurityController extends AbstractController
         // generate CSRF token
         $csrfToken = $this->csrfTokenManager->getToken('authenticate')->getValue();
 
-        return $this->render('security/login.html.twig', [
+        return $this->render('auth/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
             'csrf_token' => $csrfToken,
         ]);
+    }
+
+    #[Route(path: '/register', name: 'page_register')] 
+    public function register(): Response
+    {
+        return $this->render('auth/register.html.twig');
+    }
+
+    #[Route(path: '/forgot', name: 'auth_forgot')]
+    public function forgot(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            $email = $request->request->get('email');
+            // Generate a reset token (this is just an example, you should implement a proper token generation and storage)
+            $resetToken = bin2hex(random_bytes(32));
+            // Send the email
+            // Add a flash message or any other response
+            $this->addFlash('success', 'An email has been sent to reset your password.');
+        }
+
+        return $this->render('auth/forgot.html.twig');
+    }
+
+    #[Route(path: '/reset', name: 'page_reset')]
+    public function reset(): Response
+    {
+        return $this->render('auth/reset.html.twig');
+    }
+
+    #[Route(path: '/confirm', name: 'page_confirm')]
+    public function confirm(): Response
+    {
+        return $this->render('auth/confirm.html.twig');
     }
 
     /**

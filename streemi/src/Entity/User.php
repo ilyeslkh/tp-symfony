@@ -7,8 +7,8 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -19,36 +19,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255)]
     private ?string $username = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255)]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
     #[ORM\Column(enumType: UserAccountStatusEnum::class)]
-    private ?UserAccountStatusEnum $accountStatus = UserAccountStatusEnum::INACTIVE;
+    private ?UserAccountStatusEnum $status = null;
 
-    #[ORM\Column(type: "json")]
-    private array $roles = [];
+    #[ORM\Column(type: 'json')]
+    private array $roles = ['ROLE_USER'];
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Comment::class)]
+    private Collection $comments;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Playlist::class)]
+    private Collection $playlists;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: SubscriptionHistory::class)]
+    private Collection $subscriptionHistories;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     private ?Subscription $currentSubscription = null;
 
-    #[ORM\OneToMany(targetEntity: Playlist::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private Collection $ownedPlaylists;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $resetToken = null;
 
-    #[ORM\OneToMany(targetEntity: Playlist::class, mappedBy: 'creator', cascade: ['persist', 'remove'])]
-    private Collection $createdPlaylists;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: PlaylistSubscription::class, orphanRemoval: true)]
+    private Collection $playlistSubscriptions;
 
-  
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: WatchHistory::class, orphanRemoval: true)]
+    private Collection $watchHistories;
+
+
 
     public function __construct()
     {
-        $this->ownedPlaylists = new ArrayCollection();
-        $this->createdPlaylists = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->playlists = new ArrayCollection();
+        $this->subscriptionHistories = new ArrayCollection();
+        $this->playlistSubscriptions = new ArrayCollection(); // Initialize here
     }
 
     public function getId(): ?int
@@ -92,14 +106,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getAccountStatus(): ?UserAccountStatusEnum
+    public function getStatus(): ?UserAccountStatusEnum
     {
-        return $this->accountStatus;
+        return $this->status;
     }
 
-    public function setAccountStatus(UserAccountStatusEnum $accountStatus): self
+    public function setStatus(UserAccountStatusEnum $status): self
     {
-        $this->accountStatus = $accountStatus;
+        $this->status = $status;
 
         return $this;
     }
@@ -107,58 +121,80 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+        return $this;
+    }
+
+    public function addRole(string $role): self
+    {
+        if (!in_array($role, $this->roles, true)) {
+            $this->roles[] = $role;
+        }
 
         return $this;
     }
 
     public function eraseCredentials(): void
     {
-        // Clear sensitive data if needed
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 
-    public function getUserIdentifier(): string
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
     {
-        return $this->email;
+        return $this->comments;
     }
 
-    public function getCurrentSubscription(): ?Subscription
+    public function addComment(Comment $comment): self
     {
-        return $this->currentSubscription;
-    }
-
-    public function setCurrentSubscription(?Subscription $subscription): self
-    {
-        $this->currentSubscription = $subscription;
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setUser($this);
+        }
 
         return $this;
     }
 
-    public function getOwnedPlaylists(): Collection
+    public function removeComment(Comment $comment): self
     {
-        return $this->ownedPlaylists;
+        if ($this->comments->removeElement($comment)) {
+            if ($comment->getUser() === $this) {
+                $comment->setUser(null);
+            }
+        }
+
+        return $this;
     }
 
-    public function addOwnedPlaylist(Playlist $playlist): self
+    /**
+     * @return Collection<int, Playlist>
+     */
+    public function getPlaylists(): Collection
     {
-        if (!$this->ownedPlaylists->contains($playlist)) {
-            $this->ownedPlaylists->add($playlist);
+        return $this->playlists;
+    }
+
+    public function addPlaylist(Playlist $playlist): self
+    {
+        if (!$this->playlists->contains($playlist)) {
+            $this->playlists[] = $playlist;
             $playlist->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeOwnedPlaylist(Playlist $playlist): self
+    public function removePlaylist(Playlist $playlist): self
     {
-        if ($this->ownedPlaylists->removeElement($playlist)) {
+        if ($this->playlists->removeElement($playlist)) {
             if ($playlist->getUser() === $this) {
                 $playlist->setUser(null);
             }
@@ -167,31 +203,121 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCreatedPlaylists(): Collection
+    /**
+     * @return Collection<int, SubscriptionHistory>
+     */
+    public function getSubscriptionHistories(): Collection
     {
-        return $this->createdPlaylists;
+        return $this->subscriptionHistories;
     }
 
-    public function addCreatedPlaylist(Playlist $playlist): self
+    public function addSubscriptionHistory(SubscriptionHistory $subscriptionHistory): self
     {
-        if (!$this->createdPlaylists->contains($playlist)) {
-            $this->createdPlaylists->add($playlist);
-            $playlist->setCreator($this);
+        if (!$this->subscriptionHistories->contains($subscriptionHistory)) {
+            $this->subscriptionHistories[] = $subscriptionHistory;
+            $subscriptionHistory->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeCreatedPlaylist(Playlist $playlist): self
+    public function removeSubscriptionHistory(SubscriptionHistory $subscriptionHistory): self
     {
-        if ($this->createdPlaylists->removeElement($playlist)) {
-            if ($playlist->getCreator() === $this) {
-                $playlist->setCreator(null);
+        if ($this->subscriptionHistories->removeElement($subscriptionHistory)) {
+            if ($subscriptionHistory->getUser() === $this) {
+                $subscriptionHistory->setUser(null);
             }
         }
 
         return $this;
     }
 
-    
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getCurrentSubscription(): ?Subscription
+    {
+        return $this->currentSubscription;
+    }
+
+    public function setCurrentSubscription(?Subscription $currentSubscription): static
+    {
+        $this->currentSubscription = $currentSubscription;
+
+        return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): static
+    {
+        $this->resetToken = $resetToken;
+
+        return $this;
+    }
+
+        /**
+     * @return Collection<int, PlaylistSubscription>
+     */
+    public function getPlaylistSubscriptions(): Collection
+    {
+        return $this->playlistSubscriptions;
+    }
+
+    public function addPlaylistSubscription(PlaylistSubscription $playlistSubscription): self
+    {
+        if (!$this->playlistSubscriptions->contains($playlistSubscription)) {
+            $this->playlistSubscriptions[] = $playlistSubscription;
+            $playlistSubscription->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePlaylistSubscription(PlaylistSubscription $playlistSubscription): self
+    {
+        if ($this->playlistSubscriptions->removeElement($playlistSubscription)) {
+            // Set the owning side to null (unless already changed)
+            if ($playlistSubscription->getUser() === $this) {
+                $playlistSubscription->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+        /**
+     * @return Collection<int, WatchHistory>
+     */
+    public function getWatchHistories(): Collection
+    {
+        return $this->watchHistories;
+    }
+
+    public function addWatchHistory(WatchHistory $watchHistory): self
+    {
+        if (!$this->watchHistories->contains($watchHistory)) {
+            $this->watchHistories[] = $watchHistory;
+            $watchHistory->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWatchHistory(WatchHistory $watchHistory): self
+    {
+        if ($this->watchHistories->removeElement($watchHistory)) {
+            // Set the owning side to null (unless already changed)
+            if ($watchHistory->getUser() === $this) {
+                $watchHistory->setUser(null);
+            }
+        }
+
+        return $this;
+    }
 }

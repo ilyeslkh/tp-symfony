@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\SubscriptionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SubscriptionRepository::class)]
@@ -25,21 +26,27 @@ class Subscription
     private ?int $duration = null;
 
     /**
-     * @var Collection<int, User>
-     */
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'currentSubscription')]
-    private Collection $users;
-
-    /**
      * @var Collection<int, SubscriptionHistory>
      */
     #[ORM\OneToMany(targetEntity: SubscriptionHistory::class, mappedBy: 'subscription')]
     private Collection $subscriptionHistories;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $details = null;
+
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'currentSubscription')]
+    private Collection $users;
+
     public function __construct()
     {
-        $this->users = new ArrayCollection();
         $this->subscriptionHistories = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -84,36 +91,6 @@ class Subscription
     }
 
     /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(User $user): static
-    {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->setCurrentSubscription($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): static
-    {
-        if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getCurrentSubscription() === $this) {
-                $user->setCurrentSubscription(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, SubscriptionHistory>
      */
     public function getSubscriptionHistories(): Collection
@@ -137,6 +114,60 @@ class Subscription
             // set the owning side to null (unless already changed)
             if ($subscriptionHistory->getSubscription() === $this) {
                 $subscriptionHistory->setSubscription(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDetails(): ?string
+    {
+        return $this->details;
+    }
+
+    public function setDetails(string $details): static
+    {
+        $this->details = $details;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->setCurrentSubscription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getCurrentSubscription() === $this) {
+                $user->setCurrentSubscription(null);
             }
         }
 

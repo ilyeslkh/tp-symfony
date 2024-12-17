@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\WatchHistoryRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: WatchHistoryRepository::class)]
@@ -13,18 +14,17 @@ class WatchHistory
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $lastWatchedAt = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $lastWatched = null;
 
     #[ORM\Column]
-    private ?int $numberOfViews = null;
+    private ?int $numberOfViews;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'watchHistories')]
+    #[ORM\ManyToOne(inversedBy: 'watchHistories')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $watcher = null;
+    private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Media::class, inversedBy: 'watchHistories')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(inversedBy: 'watchHistories')]
     private ?Media $media = null;
 
     public function getId(): ?int
@@ -32,14 +32,14 @@ class WatchHistory
         return $this->id;
     }
 
-    public function getLastWatchedAt(): ?\DateTimeImmutable
+    public function getLastWatched(): ?\DateTimeInterface
     {
-        return $this->lastWatchedAt;
+        return $this->lastWatched;
     }
 
-    public function setLastWatchedAt(\DateTimeImmutable $lastWatchedAt): static
+    public function setLastWatched(\DateTimeInterface $lastWatched): static
     {
-        $this->lastWatchedAt = $lastWatchedAt;
+        $this->lastWatched = $lastWatched;
 
         return $this;
     }
@@ -56,14 +56,14 @@ class WatchHistory
         return $this;
     }
 
-    public function getWatcher(): ?User
+    public function getUser(): ?User
     {
-        return $this->watcher;
+        return $this->user;
     }
 
-    public function setWatcher(?User $watcher): static
+    public function setUser(?User $user): static
     {
-        $this->watcher = $watcher;
+        $this->user = $user;
 
         return $this;
     }

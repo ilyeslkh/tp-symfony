@@ -80,13 +80,7 @@
                     </div>
                 </div>
 
-                <ul>
-                    {% for media in popularMedias %}
-                        <li>{{ media.title }}</li> {# Assurez-vous que 'title' est une propriété de votre entité Media #}
-                    {% else %}
-                        <li>No popular media found</li>
-                    {% endfor %}
-                </ul>
+        
             </section>
         </main>
         {% include 'parts/right-sidebar.html.twig' %}

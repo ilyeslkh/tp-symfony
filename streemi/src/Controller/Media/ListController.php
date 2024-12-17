@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Movie;
+namespace App\Controller\Media;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;

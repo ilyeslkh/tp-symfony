@@ -24,8 +24,8 @@ class Playlist
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'ownedPlaylists')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\ManyToOne(inversedBy: 'playlists')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     /**
@@ -33,10 +33,6 @@ class Playlist
      */
     #[ORM\OneToMany(targetEntity: PlaylistSubscription::class, mappedBy: 'playlist')]
     private Collection $playlistSubscriptions;
-
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'createdPlaylists')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $creator = null;
 
     /**
      * @var Collection<int, PlaylistMedia>
@@ -103,18 +99,6 @@ class Playlist
         return $this;
     }
 
-    public function getCreator(): ?User
-    {
-        return $this->creator;
-    }
-
-    public function setCreator(?User $creator): static
-    {
-        $this->creator = $creator;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, PlaylistSubscription>
      */
@@ -136,6 +120,7 @@ class Playlist
     public function removePlaylistSubscription(PlaylistSubscription $playlistSubscription): static
     {
         if ($this->playlistSubscriptions->removeElement($playlistSubscription)) {
+            // set the owning side to null (unless already changed)
             if ($playlistSubscription->getPlaylist() === $this) {
                 $playlistSubscription->setPlaylist(null);
             }
@@ -165,6 +150,7 @@ class Playlist
     public function removePlaylistMedium(PlaylistMedia $playlistMedium): static
     {
         if ($this->playlistMedia->removeElement($playlistMedium)) {
+            // set the owning side to null (unless already changed)
             if ($playlistMedium->getPlaylist() === $this) {
                 $playlistMedium->setPlaylist(null);
             }
