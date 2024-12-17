@@ -1,29 +1,38 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Controller\Media;
 
+
 use App\Repository\MovieRepository;
+use App\Repository\WatchHistoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/media/film')]
 class MovieController extends AbstractController
 {
 
-    #[Route('/{id}', name: 'film_show')]
-    public function show(int $id, MovieRepository $movieRepository): Response
+    #[IsGranted('ROLE_USER')]
+    #[Route('/{id}', name: 'movie_show')]
+    public function show(int $id, Security $security, MovieRepository $movieRepository, WatchHistoryRepository $watchHistoryRepository): Response
     {
-        $film = $movieRepository->find($id);
+        $movie = $movieRepository->find($id);
 
-        if (!$film) {
-            throw $this->createNotFoundException('The film does not exist');
+        if (!$movie) {
+            throw $this->createNotFoundException('The movie does not exist');
         }
-
-        return $this->render('media/detail.html.twig', [
-            'film' => $film,
+        $user = $security->getUser();
+        $watchHistory = $watchHistoryRepository->findOneBy(['user' => $user->getId(), 'media' => $id]);
+        $nbHoursWatch = round($watchHistory->getNumberOfViews() * $movie->getDuration() / 60);
+        return $this->render('movie/detail.html.twig', [
+            'movie' => $movie,
+            'watchHistory' => $watchHistory,
+            'nbHoursWatch' => $nbHoursWatch
         ]);
     }
+
+    
 }

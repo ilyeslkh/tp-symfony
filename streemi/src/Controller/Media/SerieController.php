@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SerieController extends AbstractController
 {
 
-    #[Route('/{id}', name: 'film_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'serie_show')]
     public function show(int $id, SerieRepository $serieRepository): Response
     {
         $serie = $serieRepository->find($id);
