@@ -1,35 +1,48 @@
-\App\Entity\Media
+App\Entity\Media:
   media (template):
-    shortDescription:'short description <current()>'
-    longDescription:'Des mecs en bleu'
-    releaseDate:'<datetime()> '
-    coverImage:'https://picsum.photos/seed/picsum/200/300'
-    categories:
-      -'@category_action'
-      -'@category_adventure'
+    shortDescription: "short description <current()>"
+    longDescription: "long description <current()>"
+    releaseDate: "<dateTimeBetween('-1 week','+1 week')>"
+    coverImage: "https://picsum.photos/300/400?random=<current()>"
+    category:
+      - "@category_action"
+      - "@category_aventure"
+      - "@category_comedie"
 
-    languages:
-      -@'lang_fr'
-      -@'lang_en'
+    language:
+      - "@lang_fr"
+      - "@lang_en"
+      - "@lang_es"
 
+App\Entity\Movie:
+  media_movie{1..50} (extends media):
+    title: "Film <current()> - <name()>"
 
-\App\Entity\Movie
-  movie{1..50}(extends media):
-    title:'Film <current()name>'
-   
-
-\App\Entity\Serie
-  serie{1..50} (extends media):
-    title:'Serie <current() name>'
+App\Entity\Serie:
+  media_serie{1..50} (extends media):
+    title: "Série <current()> - <name()>"
 
 App\Entity\Season:
-  season{1..10}:
-    number:<numberBetween(1,10)>
-    serie:'@serie*'
+  season_1_{@media_serie*}:
+    seasonNumber: "<numberBetween(1, 10)>"
+    serie: "<current()>"
+  season_2_{@media_serie*}:
+    seasonNumber: "<numberBetween(1, 10)>"
+    serie: "<current()>"
+  season_3_{@media_serie*}:
+    seasonNumber: "<numberBetween(1, 10)>"
+    serie: "<current()>"
 
 App\Entity\Episode:
-  episode{1..100}:
-    title:'<name()>'
-    duration:<numberBetween(30,120)>
-    releaseAt:'<dateTimeBetween('-1 week,'+1 week')'
-    season:'@season*'
+  episode{1..200}:
+    title: "Episode <current()> - <name()>"
+    duration: '<dateTimeBetween("00:30:00", "02:00:00")>'
+    releaseDate: "<dateTimeBetween('-1 week','+1 week')>"
+    season: "@season*"
+
+App\Entity\WatchHistory:
+  watch_history_{1..500}:
+    lastWatched: "<dateTimeBetween('-1 week', '+1 week')>"
+    numberOfViews: "<numberBetween(1, 100)>"
+    user: "@user_*"
+    media: "@media_*"

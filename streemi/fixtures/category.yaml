@@ -1,7 +1,10 @@
-\App\Entity\Category:
-  category_action: nom:'action'
-    label:'Action'
-  category_aventure: nom:'aventure'
-    label:'Aventure'
-  category_comedie: nom:'comedie'
-    label:'Comedie'
+App\Entity\Category:
+  category_action:
+    name: "action"
+    label: "Action"
+  category_aventure:
+    name: "aventure"
+    label: "Aventure"
+  category_comedie:
+    name: "comedie"
+    label: "Comedie"

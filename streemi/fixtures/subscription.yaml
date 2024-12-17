@@ -1,4 +1,4 @@
-App\Entity\Subscription
+App\Entity\Subscription:
   subscription_basic:
     name: "Basic"
     price: 10

@@ -1,10 +1,12 @@
-App\Entity\User
-  user {1..50}:
-    username:'<name()>'
-    email:'<email>()'
-    password:'<password()>'
-
+App\Entity\User:
+  user_{1..50}:
+    username: "<name()>"
+    email: "<email()>"
+    password: "<password()>"
+    status: "active" # Utilisez directement la valeur de la constante 'active' ici
   user_admin:
-    username:'admin'
-    email:'admin@example.com'
-    password:'test'
+    username: "ilyes"
+    email: "ilyes.depercin@gmail.com"
+    password: "test"
+    roles: ["ROLE_ADMIN"]
+    status: "active" # Idem ici, utiliser la valeur directe

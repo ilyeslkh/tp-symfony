@@ -35,7 +35,7 @@ final class Version20241216225453 extends AbstractMigration
         $this->addSql('ALTER TABLE playlist_subscription ADD CONSTRAINT FK_832940CA76ED395 FOREIGN KEY (user_id) REFERENCES `user` (id)');
         $this->addSql('CREATE INDEX IDX_832940CA76ED395 ON playlist_subscription (user_id)');
         $this->addSql('ALTER TABLE season ADD season_number INT NOT NULL, DROP number, CHANGE serie_id serie_id INT DEFAULT NULL');
-        $this->addSql('ALTER TABLE subscription ADD description VARCHAR(255) DEFAULT NULL, ADD details LONGTEXT NOT NULL');
+        $this->addSql('ALTER TABLE subscription ADD description VARCHAR(255) DEFAULT NULL, ADD details LONGTEXT ');
         $this->addSql('ALTER TABLE subscription_history DROP FOREIGN KEY FK_54AF90D07808B1AD');
         $this->addSql('DROP INDEX IDX_54AF90D07808B1AD ON subscription_history');
         $this->addSql('ALTER TABLE subscription_history ADD start_date DATE NOT NULL, ADD end_date DATE NOT NULL, DROP start_at, DROP end_at, CHANGE subscriber_id user_id INT NOT NULL');

@@ -203,6 +203,7 @@ class AppFixtures extends Fixture
                 $comment->setContent($faker->paragraph);
                 $comment->setUser($faker->randomElement($users));
                 $comment->setMedia($media);
+                $comment->setStatusEnum(CommentStatusEnum::PENDING);
                 $manager->persist($comment);
             }
         }

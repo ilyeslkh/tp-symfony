@@ -27,13 +27,11 @@ class SecurityController extends AbstractController
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        // generate CSRF token
-        $csrfToken = $this->csrfTokenManager->getToken('authenticate')->getValue();
+        // generate CSRF tokn
 
         return $this->render('auth/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,
-            'csrf_token' => $csrfToken,
         ]);
     }
 
@@ -70,12 +68,11 @@ class SecurityController extends AbstractController
         return $this->render('auth/confirm.html.twig');
     }
 
-    /**
-     * @Route("/logout", name="app_logout")
-     */
+
+    
+     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
-        // controller can be blank: it will never be executed!
         throw new \Exception('Don\'t forget to activate logout in security.yaml');
     }
 }
