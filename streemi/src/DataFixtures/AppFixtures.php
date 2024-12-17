@@ -104,7 +104,6 @@ class AppFixtures extends Fixture
             $media->setCoverImage($faker->imageUrl(300, 400, 'media', true));
             $media->setStaff($faker->words(5));
             $media->setCasting($faker->words(5));
-            $media->setDuration($faker->numberBetween(70, 200));
 
             foreach ($faker->randomElements($categories, rand(1, self::MAX_CATEGORY_PER_MEDIA)) as $category) {
                 $media->addCategory($category);

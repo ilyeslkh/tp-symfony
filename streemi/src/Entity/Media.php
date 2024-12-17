@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use App\Repository\MediaRepository;
@@ -12,7 +13,7 @@ use Doctrine\ORM\Mapping\InheritanceType;
 
 #[InheritanceType('JOINED')]
 #[DiscriminatorColumn(name:'disc',type:'string')]
-#[DiscriminatorMap(['serie' => Serie::class, 'movie' => Movie::class])]
+#[DiscriminatorMap(['serie' =>Serie::class, 'movie' => Movie::class])]
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 class Media
 {
@@ -21,26 +22,29 @@ class Media
     #[ORM\Column]
     private ?int $id = null;
 
+
+
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(nullable: true, type: Types::TEXT)]
+    #[ORM\Column(nullable:true,type: Types::TEXT)]
     private ?string $shortDescription = null;
 
-    #[ORM\Column(nullable: true, type: Types::TEXT)]
+    #[ORM\Column(nullable:true,type: Types::TEXT)]
     private ?string $longDescription = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $releaseDate = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255,nullable:true)]
     private ?string $coverImage = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable:true)]
     private array $staff = [];
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable:true)]
     private array $casting = [];
+
 
     /**
      * @var Collection<int, Comment>
@@ -72,15 +76,12 @@ class Media
     #[ORM\ManyToMany(targetEntity: Language::class, inversedBy: 'media')]
     private Collection $language;
 
-    #[ORM\Column]
-    private ?int $duration = null;
-
     public function __construct()
     {
         $this->comments = new ArrayCollection();
         $this->watchHistories = new ArrayCollection();
-        $this->playlistMedia = new ArrayCollection();
         $this->category = new ArrayCollection();
+        $this->playlistMedia = new ArrayCollection();
         $this->language = new ArrayCollection();
     }
 
@@ -172,7 +173,6 @@ class Media
 
         return $this;
     }
-
     /**
      * @return Collection<int, Comment>
      */
@@ -232,7 +232,6 @@ class Media
 
         return $this;
     }
-
     /**
      * @return Collection<int, PlaylistMedia>
      */
@@ -310,17 +309,4 @@ class Media
 
         return $this;
     }
-
-    public function getDuration(): ?int
-    {
-        return $this->duration;
-    }
-
-    public function setDuration(int $duration): static
-    {
-        $this->duration = $duration;
-
-        return $this;
-    }
 }
-?>
