@@ -202,7 +202,6 @@ class AppFixtures extends Fixture
             for ($j = 0; $j < self::MAX_COMMENTS_PER_MEDIA; $j++) {
                 $comment = new Comment();
                 $comment->setContent($faker->paragraph);
-                $comment->setStatusEnum(CommentStatusEnum::PUBLISH);
                 $comment->setUser($faker->randomElement($users));
                 $comment->setMedia($media);
                 $manager->persist($comment);

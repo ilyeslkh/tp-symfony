@@ -7,9 +7,7 @@ namespace App\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
+
 final class Version20241216225453 extends AbstractMigration
 {
     public function getDescription(): string
@@ -19,7 +17,6 @@ final class Version20241216225453 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE category ADD name VARCHAR(100) NOT NULL, DROP nom, DROP icon, CHANGE label label VARCHAR(100) NOT NULL');
         $this->addSql('ALTER TABLE comment DROP FOREIGN KEY FK_9474526C40C86FCE');
         $this->addSql('DROP INDEX IDX_9474526C40C86FCE ON comment');
